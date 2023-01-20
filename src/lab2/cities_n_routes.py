@@ -23,13 +23,12 @@ def get_randomly_spread_cities(size, n_cities):
     :param n_cities: The number of cities to generate
     :return: A list of cities with random x and y coordinates.
     """
-    # Consider the condition where x size and y size are different
 
     city_locations = [] 
 
-    for z in n_cities:
+    for z in range(0, n_cities):
+        #assign random x and y values 
         city_locations.append((random.randint(0,size[0]),random.randint(0,size[1]))) #append a tuple with random x & y
-        z+=1 
 
     return city_locations
 
@@ -47,11 +46,9 @@ def get_routes(city_names):
 
     route_list = []
 
-    for z in len(city_names):
-        for q in len(city_names):
-            route_list.append((city_names[z]),city_names[q]) 
-            q+=1
-        z+=1
+    for i in range(0, len(city_names)):
+        for j in range(i+1, len(city_names)):
+            route_list.append((city_names[i],city_names[j]))
 
     return route_list
 
@@ -59,10 +56,10 @@ def get_routes(city_names):
 if __name__ == '__main__':
     city_names = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
     '''print the cities and routes'''
-    cities = get_randomly_spread_cities((100, 200), len(city_names)) #city_locations (list of tuples) [(x1, y1), (x2, y2)...]
+    city_locations = get_randomly_spread_cities((100, 200), len(city_names)) #city_locations (list of tuples) [(x1, y1), (x2, y2)...]
     routes = get_routes(city_names)
     print('Cities:')
-    for i, city in enumerate(cities):
+    for i, city in enumerate(city_locations):
         print(f'{city_names[i]}: {city}')
     print('Routes:')
     for i, route in enumerate(routes):

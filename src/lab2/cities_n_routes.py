@@ -8,7 +8,7 @@ import random
 
 #random.randint(a,b) <- returns random int between range a and b
 import itertools
-#itertools 
+#itertools
 # a = [1, 2, 3] 
 # combinations = itertools.combinations(a, 2)
 # print(list(combinations))

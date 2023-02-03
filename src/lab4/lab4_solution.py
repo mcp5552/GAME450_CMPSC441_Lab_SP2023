@@ -45,7 +45,18 @@ class AiPlayer(Player):
         self.initial_weapon = random_weapon_select()
     
     def weapon_selecting_strategy(self):
-        pass
+        #return self.opponent_choices[-1] is opponent's last choice
+        if len(self.opponent_choices) == 0:
+            return self.initial_weapon
+        if len(self.opponent_choices) == 1:
+            return self.initial_weapon
+        if len(self.opponent_choices) >= 2:    
+            if(self.opponent_choices[0])==(self.opponent_choices[1]): #if single or switch agent 
+                return (self.opponent_choices[-1]+1)%3 #this code defeats single and switch agent 
+            else:
+                return (self.my_choices[-1]+1)%3 #this code defeats mimic agent 
+
+        #return (self.opponent_choices[-1]+1)%3 #this code defeats single and switch agent 
 
 
 if __name__ == '__main__':

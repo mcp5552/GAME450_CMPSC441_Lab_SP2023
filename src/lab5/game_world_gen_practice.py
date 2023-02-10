@@ -29,23 +29,23 @@ from lab2.cities_n_routes import get_randomly_spread_cities, get_routes
 # TODO: Demo blittable surface helper function
 
 ''' Create helper functions here '''
+def get_landscape_surface(size):
+    landscape = get_landscape(size)
+    print("Created a landscape of size", landscape.shape)
+    pygame_surface = pygame.surfarray.make_surface(landscape[:, :, :3]) 
+    return pygame_surface
 
 if __name__ == "__main__":
     pygame.init()
     size = width, height = 640, 480
     black = 1, 1, 1
-
     screen = pygame.display.set_mode(size)
-    landscape = get_landscape(size)
-    print("Created a landscape of size", landscape.shape)
-    pygame_surface = pygame.surfarray.make_surface(landscape[:, :, :3]) 
-
+    pygame_surface = get_landscape_surface(size)
     city_names = ['Morkomasto', 'Morathrad', 'Eregailin', 'Corathrad', 'Eregarta',
                   'Numensari', 'Rhunkadi', 'Londathrad', 'Baernlad', 'Forthyr']
-    city_locations = [] 
-    routes = []
-
-    ''' Setup cities and routes in here'''
+    city_number = len(city_names)
+    city_locations = get_randomly_spread_cities(size, city_number)
+    routes = get_routes(city_names)
 
     city_locations_dict = {name: location for name, location in zip(city_names, city_locations)}
     random.shuffle(routes)
@@ -59,8 +59,20 @@ if __name__ == "__main__":
         screen.fill(black)
         screen.blit(pygame_surface, (0, 0))
 
+        line_color = pygame.Color(100,100,100) 
+        line_width = 1; 
+
         ''' draw cities '''
+        city_color = pygame.Color(200,200,200) 
+        for i in range(0,len(city_names)):
+            pygame.draw.circle(pygame_surface, city_color, city_locations[i],5)
 
         ''' draw first 10 routes '''
+        for i in range (0,9):
+            start_city = routes[i][0]  #string
+            end_city = routes[i][1] #string
+            start_coords = city_locations_dict[start_city]
+            end_coords = city_locations_dict[end_city]
+            pygame.draw.line(pygame_surface, line_color, start_coords, end_coords, line_width)
 
         pygame.display.flip()

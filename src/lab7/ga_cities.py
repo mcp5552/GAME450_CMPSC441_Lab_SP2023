@@ -4,7 +4,7 @@ Lab 7: Realistic Cities
 In this lab you will try to generate realistic cities using a genetic algorithm.
 Your cities should not be under water, and should have a realistic distribution across the landscape.
 Your cities may also not be on top of mountains or on top of each other.
-Create the fitness function for your genetic algorithm, so that it fulfills these criterion
+Create the fitness function for your genetic algorithm, so that it fulfills these criteria
 and then use it to generate a population of cities.
 
 Please comment your code in the fitness function to explain how are you making sure each criterion is 
@@ -13,6 +13,7 @@ fulfilled. Clearly explain in comments which line of code and variables are used
 import matplotlib.pyplot as plt
 import pygad
 import numpy as np
+from perlin_noise import PerlinNoise
 
 import sys
 from pathlib import Path
@@ -21,9 +22,23 @@ sys.path.append(str((Path(__file__) / ".." / ".." / "..").resolve().absolute()))
 
 from src.lab5.landscape import elevation_to_rgba
 
-
+#input 1 of game_fitness() is actually (list of grid cell numbers), not cities
 def game_fitness(cities, idx, elevation, size):
-    fitness = 0.0001  # Do not return a fitness of 0, it will mess up the algorithm.
+    max_height = .7
+    min_height = .35
+    fitness = 1  # Do not return a fitness of 0, it will mess up the algorithm.
+    city_coords = solution_to_cities(cities, size)
+
+    #for all cities, check the elevation, if any are out of bounds then decrease fitness 
+    for i in range(len(cities)):
+        current_elevation = elevation[city_coords[i][1]][city_coords[i][0]]
+        if current_elevation < min_height:
+           fitness = 0.0001
+           #break
+        if current_elevation > max_height:
+            fitness = 0.0001
+           #break
+
     """
     Create your fitness function here to fulfill the following criteria:
     1. The cities should not be under water
@@ -31,7 +46,6 @@ def game_fitness(cities, idx, elevation, size):
     3. The cities may also not be on top of mountains or on top of each other
     """
     return fitness
-
 
 def setup_GA(fitness_fn, n_cities, size):
     """
@@ -44,9 +58,9 @@ def setup_GA(fitness_fn, n_cities, size):
     :return: The fitness function and the GA instance.
     """
     num_generations = 100
-    num_parents_mating = 10
+    num_parents_mating = 10 #initially 10
 
-    solutions_per_population = 300
+    solutions_per_population = 300 #initially 300
     num_genes = n_cities
 
     init_range_low = 0
@@ -107,13 +121,19 @@ def show_cities(cities, landscape_pic, cmap="gist_earth"):
     plt.plot(cities[:, 1], cities[:, 0], "r.")
     plt.show()
 
+def generate_elevation(size):
+    xpix, ypix = size
+    noise = PerlinNoise(octaves=6, seed=3)
+    elevation = np.array([[noise([i/xpix, j/ypix]) for j in range(ypix)] for i in range(xpix)])
+    '''Play around with perlin noise to get a better looking landscape (This is required for the lab)'''
+    return elevation
 
 if __name__ == "__main__":
     print("Initial Population")
 
     size = 100, 100
     n_cities = 10
-    elevation = []
+    elevation = generate_elevation(size)
     """ initialize elevation here from your previous code"""
     # normalize landscape
     elevation = np.array(elevation)

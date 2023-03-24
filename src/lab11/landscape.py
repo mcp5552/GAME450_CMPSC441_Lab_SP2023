@@ -3,10 +3,10 @@ from perlin_noise import PerlinNoise
 import numpy as np
 
 
-def get_elevation(size, octaves=3):
+def get_elevation(size, octaves=6):
     xpix, ypix = size
-    noise = PerlinNoise(octaves=octaves, seed=2)
-    # elevation = np.random.random(size)
+    noise = PerlinNoise(octaves=octaves, seed=3)
+    # elevation = np.random.random(size) #random elevation if you want 
     elevation = np.array(
         [[noise([i / xpix, j / ypix]) for j in range(ypix)] for i in range(xpix)]
     )

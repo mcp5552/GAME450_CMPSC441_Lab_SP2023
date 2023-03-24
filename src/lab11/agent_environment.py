@@ -96,10 +96,12 @@ if __name__ == "__main__":
 
     player_sprite = Sprite(sprite_path, cities[start_city])
 
-    player = PyGameHumanPlayer()
+    """Set player of game to either human or AI """
+    #player = PyGameHumanPlayer()
 
     """ Add a line below that will reset the player variable to 
     a new object of PyGameAIPlayer class."""
+    player = PyGameAIPlayer() 
 
     state = State(
         current_city=start_city,
@@ -110,7 +112,7 @@ if __name__ == "__main__":
         routes=routes,
     )
 
-    while True:
+    while True: #main gameplay loop
         action = player.selectAction(state)
         if 0 <= int(chr(action)) <= 9:
             if int(chr(action)) != state.current_city and not state.travelling:

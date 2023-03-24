@@ -5,10 +5,9 @@ import sys
 from pathlib import Path
 
 sys.path.append(str((Path(__file__) / ".." / "..").resolve().absolute()))
-from lab4.rock_paper_scissor import Player
+from lab4.rock_paper_scissor import Player #player is the same class as in rock paper scissors 
 
 weapons = ["Sword", "Arrow", "Fire"]
-
 
 class CombatPlayer(Player):
     def __init__(self, name):

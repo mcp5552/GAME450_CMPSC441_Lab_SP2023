@@ -12,7 +12,7 @@ pygame.font.init()
 game_font = pygame.font.SysFont("Comic Sans MS", 15)
 
 
-class PyGameComputerCombatPlayer(CombatPlayer):
+class PyGameComputerCombatPlayer(CombatPlayer): 
     def __init__(self, name):
         super().__init__(name)
 
@@ -28,7 +28,7 @@ class PyGameComputerCombatPlayer(CombatPlayer):
 
 def run_pygame_combat(combat_surface, screen, player_sprite):
     currentGame = Combat()
-    player = PyGameHumanCombatPlayer("Legolas")
+    player = PyGameHumanCombatPlayer("Oillill")
     """ Add a line below that will reset the player object
     to an instance of the PyGameAICombatPlayer class"""
 

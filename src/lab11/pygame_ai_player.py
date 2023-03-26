@@ -8,7 +8,7 @@ class PyGameAIPlayer:
         pass
 
     def selectAction(self, state):
-        return random.choice([0,1,2,3,4,5,6,7,8,9])
+        return random.choice(['0','1','2','3','4','5','6','7', '8', '9'])
 
 
 """ Create PyGameAICombatPlayer class here"""

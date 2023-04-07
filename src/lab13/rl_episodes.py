@@ -63,10 +63,12 @@ def get_history_returns(history):
         )
     return returns
 
-
+'''
+Runs 'n_episodes' random episodes and return the action values for each state-action pair.
+Action values are calculated as the average return for each state-action pair over the 'n_episodes' episodes.
+'''
 def run_episodes(n_episodes):
-    ''' Run 'n_episodes' random episodes and return the action values for each state-action pair.
-        Action values are calculated as the average return for each state-action pair over the 'n_episodes' episodes.
+    ''' 
         Use the get_history_returns function to get the returns for each state-action pair in each episode.
         Collect the returns for each state-action pair in a dictionary of dictionaries where the keys are states and
             the values are dictionaries of actions and their returns.
@@ -74,7 +76,17 @@ def run_episodes(n_episodes):
         Return the action values as a dictionary of dictionaries where the keys are states and 
             the values are dictionaries of actions and their values.
     '''
-
+    dict = {} # a dictionary of dictionaries, keys are states (observations) and values are returns 
+    history = [n_episodes] #list of results (lists- [observation (i.e. state), action, reward]) 
+    player = PyGameRandomCombatPlayer("Rando") #player that takes random actions 
+    opponent = PyGameComputerCombatPlayer("Comp")
+    for n in range(n_episodes):
+        history[n] = run_random_episode(player, opponent) # result = [observation (i.e. state), action, reward] 
+        #get_history_returns returns a dictionary 
+        ret_val = get_history_returns(history[n]) #Use the get_history_returns function to get the returns for each state-action pair in each episode.
+        dict[history[n].observation] = ret_val #save the keys are states, the values are dictionaries of actions and their returns.
+        ret_sum += ret_val   # collect sum of returns 
+    action_values = ret_sum / n   # get average retrurn
     return action_values
 
 

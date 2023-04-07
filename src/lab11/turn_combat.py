@@ -78,12 +78,7 @@ class Combat:
             self.gameOver = True
             print("*** Draw ***")
             return 0
-<<<<<<< HEAD
-        else:
-            return 0
-=======
         return 0
->>>>>>> 02420b0ab485337704763d09b425a884e216686a
 
     def displayResult(self, player, opponent):
         print(

@@ -1,6 +1,11 @@
 """ Create PyGameAIPlayer class here"""
 import pygame
-from turn_combat import CombatPlayer
+import sys
+from pathlib import Path
+
+# line taken from turn_combat.py
+sys.path.append(str((Path(__file__) / ".." / "..").resolve().absolute()))
+from lab11.turn_combat import CombatPlayer
 import random
 
 class PyGameAIPlayer:

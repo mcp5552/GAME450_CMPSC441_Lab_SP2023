@@ -1,3 +1,15 @@
+"""
+landscape.py
+definitions for perlin map, and 
+
+contains:
+get_elevation(size, octaves)
+elevation_to_rgba(elevation, cmap="gist_earth")
+get_landscape()
+get_combat_bg()
+"""
+
+
 import matplotlib.pyplot as plt
 from perlin_noise import PerlinNoise
 import numpy as np

@@ -1,3 +1,12 @@
+"""
+pygame_ai_player.py
+defines the AI player classes for playing the game and for handling combat
+
+contains:
+class PyGameAIPlayer
+class PyGameAiPlayer(CombatPlayer)
+"""
+
 """ Create PyGameAIPlayer class here"""
 import pygame
 import sys

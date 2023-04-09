@@ -1,3 +1,15 @@
+"""
+agent_environment.py
+creates the game and battle maps and contains the main gameplay loop 
+
+    contains:
+get_landscape_surface(size)
+get_combat_surface(size)
+setup_window(width, height, caption)
+displayCityNames(city_locations, city_names)
+    Class State
+"""
+
 import sys
 import pygame
 import random

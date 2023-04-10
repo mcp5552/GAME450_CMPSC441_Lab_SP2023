@@ -26,7 +26,6 @@ from collections import defaultdict
 import random
 import numpy as np
 
-
 class PyGameRandomCombatPlayer(PyGameComputerCombatPlayer):
     def __init__(self, name):
         super().__init__(name)
@@ -34,7 +33,6 @@ class PyGameRandomCombatPlayer(PyGameComputerCombatPlayer):
     def weapon_selecting_strategy(self):
         self.weapon = random.randint(0, 2)
         return self.weapon
-
 
 class PyGamePolicyCombatPlayer(CombatPlayer):
     def __init__(self, name, policy):
@@ -45,12 +43,10 @@ class PyGamePolicyCombatPlayer(CombatPlayer):
         self.weapon = self.policy[self.current_env_state]
         return self.weapon
 
-
 def run_random_episode(player, opponent):
     player.health = random.choice(range(10, 110, 10))
     opponent.health = random.choice(range(10, 110, 10))
     return run_episode(player, opponent)
-
 
 def get_history_returns(history):
     total_return = sum([reward for _, _, reward in history])
@@ -64,6 +60,7 @@ def get_history_returns(history):
     return returns
 
 '''
+run_episodes(n_episodes)
 Runs 'n_episodes' random episodes and return the action values for each state-action pair.
 Action values are calculated as the average return for each state-action pair over the 'n_episodes' episodes.
 '''
@@ -77,25 +74,23 @@ def run_episodes(n_episodes):
             the values are dictionaries of actions and their values.
     '''
     dict = {} # a dictionary of dictionaries, keys are states (observations) and values are returns 
-    history = [n_episodes] #list of results (lists- [observation (i.e. state), action, reward]) 
+    history = [n_episodes] #list of episode results (tuples: (observation (i.e. state), action, reward) )
     player = PyGameRandomCombatPlayer("Rando") #player that takes random actions 
     opponent = PyGameComputerCombatPlayer("Comp")
     for n in range(n_episodes):
-        history[n] = run_random_episode(player, opponent) # result = [observation (i.e. state), action, reward] 
-        #get_history_returns returns a dictionary 
+        history[n] = run_random_episode(player, opponent) # result = (observation (i.e. state), action, reward)
+        # (get_history_returns returns a dictionary) 
         ret_val = get_history_returns(history[n]) #Use the get_history_returns function to get the returns for each state-action pair in each episode.
         dict[history[n].observation] = ret_val #save the keys are states, the values are dictionaries of actions and their returns.
         ret_sum += ret_val   # collect sum of returns 
     action_values = ret_sum / n   # get average retrurn
     return action_values
 
-
 def get_optimal_policy(action_values):
     optimal_policy = defaultdict(int)
     for state in action_values:
         optimal_policy[state] = max(action_values[state], key=action_values[state].get)
     return optimal_policy
-
 
 def test_policy(policy):
     names = ["Legolas", "Saruman"]
@@ -108,7 +103,6 @@ def test_policy(policy):
             [reward for _, _, reward in run_episode(*players)]
         )
     return total_reward / 100
-
 
 if __name__ == "__main__":
     action_values = run_episodes(10000)

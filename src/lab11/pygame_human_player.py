@@ -1,3 +1,12 @@
+"""
+pygame_human_player.py
+defines running of the game when a human (not an ai) is playing 
+
+contains:
+class PyGameHumanPlayer
+PyGameHumanCombatPlayer(CombatPlayer)
+"""
+
 import pygame
 from lab11.turn_combat import CombatPlayer
 

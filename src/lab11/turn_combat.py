@@ -1,3 +1,13 @@
+"""
+turn_combat.py
+
+contains:
+class CombatPlayer(Player)
+class ComputerCombatPlayer(CombatPlayer)
+class Combat
+run_console_combat()
+"""
+
 # From https://codereview.stackexchange.com/questions/237601/simple-python-turn-based-battle-game
 import random
 import pygame
@@ -64,7 +74,7 @@ class Combat:
         self.round += 1
         print("\n***   Round: %d   ***\n" % (self.round))
 
-    # Check if either or both Players is below zero health
+    # Check if either or both Players is below zero health 
     def checkWin(self, player, opponent):
         if player.health < 1 and opponent.health > 0:
             self.gameOver = True
@@ -93,7 +103,6 @@ class Combat:
         print("%s caused damage to %s\n" % (player.name, opponent.name))
 
     def takeTurn(self, player, opponent):
-
         # Decision Array
         #
         #           Sword |  Arrow |  Fire

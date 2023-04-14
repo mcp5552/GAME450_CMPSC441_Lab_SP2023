@@ -21,6 +21,7 @@ Reward is the reward for the player for that turn.
 
 from lab11.pygame_combat import run_turn
 from lab11.pygame_combat import run_pygame_combat
+from lab11.turn_combat import Combat
 
 import sys
 from pathlib import Path
@@ -29,13 +30,12 @@ from pathlib import Path
 sys.path.append(str((Path(__file__) / ".." / "..").resolve().absolute()))
 
 def run_episode(player1, player2): #one episode is multiple turns 
-    reward, i = 0, 0
+    currentGame = Combat()
+    reward = 0
     result = []  # the result of the episode, a list of tuples for each turn of the episode 
-    while reward == 0: # run until combat ends with (1 or -1)
+    while not currentGame.gameOver: 
         observation = (player1.health, player2.health)
+        reward = run_turn(currentGame, player1, player2) # checkWin() returns -1 if lose, 1 if win, 0 if draw or no winner yet 
         action = player1.weapon
-        #might want to make changes in run_turn to get other stuff from there (Maybe)
-        reward = run_turn(player1, player2) # checkWin() returns -1 if lose, 1 if win, 0 if draw or no winner yet 
-        result[i] = (observation, action, reward) 
-        i += 1 
+        result.append((observation, action, reward))
     return result 

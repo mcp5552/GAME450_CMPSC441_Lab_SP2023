@@ -93,10 +93,10 @@ def run_episodes(n_episodes):
         returns = get_history_returns(history[n]) #Use the get_history_returns function to get the returns for each state-action pair in each episode.
         #for a given history, access all its observations and the returns of all those observations 
         for observation, action, reward in history[n]:
-            if observation in action_values:
-                action_values[observation].append(returns[observation]) #insert entries into dictionary 
-            else:
-                action_values[observation] = returns[observation]
+            #if observation in action_values: #if there is already an entry for the state 
+            action_values[observation][returns].update(returns[observation]) #insert entries into dictionary 
+            #else: #if there is no entry for the state 
+                #action_values[observation] = returns[observation]
             # need to make sure we can calculate the average 
             # for each action for a particular state, average all of the returns over all of the episodes 
     return action_values

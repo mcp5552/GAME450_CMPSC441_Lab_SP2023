@@ -83,22 +83,32 @@ def run_episodes(n_episodes):
         values are floating point numbers
         ex: action_values = { (100,100): {0: value1, 1: value2, 2: value3}, (80,90): {0:value1, 1:value2}}
     '''
-    action_values = {} # a dictionary of dictionaries, keys=states (observations), values=returns (dictionaries, keys=actions, values=rewards)
+    ret_dict = {} # a dictionary of dictionaries, keys=states (observations), values=returns (dictionaries, keys=actions, values=rewards)
+    action_values = {} 
     history = [] #list of results of each episode (results are lists- [observation (i.e. state), action, reward]) 
     player = PyGameRandomCombatPlayer("Rando") #player that takes random actions 
     opponent = PyGameComputerCombatPlayer("Comp")
     for n in range(n_episodes):
-        history.append(run_random_episode(player, opponent)) # result = [observation (i.e. state), action, reward] 
-        #(get_history_returns returns a nested dictionary with keys= states, values = dictionaries (keys = actions, values = rewards)
+        history.append(run_random_episode(player, opponent)) # appends new result list, result=[observation (state), action, reward] 
         returns = get_history_returns(history[n]) #Use the get_history_returns function to get the returns for each state-action pair in each episode.
-        #for a given history, access all its observations and the returns of all those observations 
-        for observation, action, reward in history[n]:
-            #if observation in action_values: #if there is already an entry for the state 
-            action_values[observation][returns].update(returns[observation]) #insert entries into dictionary 
-            #else: #if there is no entry for the state 
-                #action_values[observation] = returns[observation]
-            # need to make sure we can calculate the average 
-            # for each action for a particular state, average all of the returns over all of the episodes 
+        #get_history_returns returns a nested dictionary with keys=states, values="returns" (dictionaries, keys=actions, values=rewards)
+        for observation, action, reward in history[n]: #for a given history, access all its observations and the returns of all those observations 
+            if observation not in ret_dict: # add state if missing  
+                ret_dict[observation] = returns[observation] # add key (observation) with values (dictionaries, actions:rewards)
+            else:
+                #I think this doens't work because it overwrites action-reward combos for actions that had entries already (?) 
+                ret_dict[observation].update(returns[observation])  #update nested dictionary with new entries 
+    
+    # after all the episodes have been run 
+    for observation in ret_dict: #for every state
+        ret = 0
+        if observation not in action_values: # add state if missing  
+                action_values[observation] = None 
+        for action in observation: #for every action of every state 
+            ret += reward #get sum of rewards for that action 
+        average_return = ret / len(ret_dict[observation].values) #get average return of all rewards for all actions for a state 
+        action_values[observation][action] = average_return #add average_return for action to action_values 
+        # for each action for a particular state, average all of the returns over all of the episodes 
     return action_values
 
 

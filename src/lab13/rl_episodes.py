@@ -95,19 +95,30 @@ def run_episodes(n_episodes):
         for observation, action, reward in history[n]: #for a given history, access all its observations and the returns of all those observations 
             if observation not in ret_dict: # add state if missing  
                 ret_dict[observation] = returns[observation] # add key (observation) with values (dictionaries, actions:rewards)
+                for actions in ret_dict[observation]: #for all action-value pairs in returned dictionary 
+                    ret_dict[observation][action] = [ret_dict[observation][action]] #convert rewards to list 
             else:
-                #I think this doens't work because it overwrites action-reward combos for actions that had entries already (?) 
-                ret_dict[observation].update(returns[observation])  #update nested dictionary with new entries 
+                if action not in ret_dict[observation]: #if no entry for action
+                    ret_dict[observation][action] = reward #inserts action (with first reward)
+                #I think this doesn't work because it overwrites action-reward combos for actions that had entries already (?) 
+                if not isinstance(ret_dict[observation][action],list): #if rewards is not list (do this to prevent overwriting)
+                    if isinstance(ret_dict[observation][action],int): #if there is an integer there 
+                        ret_dict[observation][action] = [ret_dict[observation][action]] #create a list, insert integer formally there
+                    else:
+                        ret_dict[observation][action] = [] #create empty list 
+                else: 
+                    ret_dict[observation][action].append(reward) #append rewards list with new reward 
     
     # after all the episodes have been run 
     for observation in ret_dict: #for every state
-        ret = 0
         if observation not in action_values: # add state if missing  
-                action_values[observation] = None 
-        for action in observation: #for every action of every state 
-            ret += reward #get sum of rewards for that action 
-        average_return = ret / len(ret_dict[observation].values) #get average return of all rewards for all actions for a state 
-        action_values[observation][action] = average_return #add average_return for action to action_values 
+                action_values[observation] = {} 
+        for action in ret_dict[observation]: #for every action of every state
+            ret = 0
+            for reward in ret_dict[observation][action]: #for every reward of every action
+                ret += reward #get sum of rewards for that action 
+            average_return = ret / len(ret_dict[observation][action]) #get average by dividing sum of rewards by length of reward list
+            action_values[observation][action] = average_return 
         # for each action for a particular state, average all of the returns over all of the episodes 
     return action_values
 
@@ -133,7 +144,7 @@ def test_policy(policy):
 
 
 if __name__ == "__main__":
-    action_values = run_episodes(10000)
+    action_values = run_episodes(10) # 10000 originally 
     print(action_values)
     optimal_policy = get_optimal_policy(action_values)
     print(optimal_policy)

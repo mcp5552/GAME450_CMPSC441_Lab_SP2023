@@ -97,16 +97,16 @@ def run_episodes(n_episodes):
                 ret_dict[observation] = returns[observation] # add key (observation) with values (dictionaries, actions:rewards)
                 for actions in ret_dict[observation]: #for all action-value pairs in returned dictionary 
                     ret_dict[observation][action] = [ret_dict[observation][action]] #convert rewards to list 
-            else:
+            else: #if the state had an entry already 
                 if action not in ret_dict[observation]: #if no entry for action
                     ret_dict[observation][action] = reward #inserts action (with first reward)
-                #I think this doesn't work because it overwrites action-reward combos for actions that had entries already (?) 
-                if not isinstance(ret_dict[observation][action],list): #if rewards is not list (do this to prevent overwriting)
+                if not isinstance(ret_dict[observation][action],list): #if rewards is not a list (do this to prevent overwriting)
                     if isinstance(ret_dict[observation][action],int): #if there is an integer there 
-                        ret_dict[observation][action] = [ret_dict[observation][action]] #create a list, insert integer formally there
-                    else:
+                        #this appears to be creating nested lists when it shouldn't ?? 
+                        ret_dict[observation][action] = [ret_dict[observation][action]] #replace integer with list containing integer
+                    else: #(if there is nothing there yet)
                         ret_dict[observation][action] = [] #create empty list 
-                else: 
+                else:  #if there was a list there already 
                     ret_dict[observation][action].append(reward) #append rewards list with new reward 
     
     # after all the episodes have been run 

@@ -14,7 +14,7 @@ this may lead to the agent losing the game.
 '''
 import sys
 from pathlib import Path
-
+from copy import deepcopy
 # line taken from turn_combat.py
 sys.path.append(str((Path(__file__) / ".." / "..").resolve().absolute()))
 
@@ -25,6 +25,8 @@ from lab12.episode import run_episode
 from collections import defaultdict
 import random
 import numpy as np
+
+random.seed(555)
 
 
 class PyGameRandomCombatPlayer(PyGameComputerCombatPlayer):
@@ -89,36 +91,23 @@ def run_episodes(n_episodes):
     player = PyGameRandomCombatPlayer("Rando") #player that takes random actions 
     opponent = PyGameComputerCombatPlayer("Comp")
     for n in range(n_episodes):
-        history.append(run_random_episode(player, opponent)) # appends new result list, result=[observation (state), action, reward] 
-        returns = get_history_returns(history[n]) #Use the get_history_returns function to get the returns for each state-action pair in each episode.
+        history = run_random_episode(player, opponent) 
+        returns = get_history_returns(history) #Use the get_history_returns function to get the returns for each state-action pair in each episode.
         #get_history_returns returns a nested dictionary with keys=states, values="returns" (dictionaries, keys=actions, values=rewards)
-        for observation, action, reward in history[n]: #for a given history, access all its observations and the returns of all those observations 
-            if observation not in ret_dict: # add state if missing  
-                ret_dict[observation] = returns[observation] # add key (observation) with values (dictionaries, actions:rewards)
-                for actions in ret_dict[observation]: #for all action-value pairs in returned dictionary 
-                    ret_dict[observation][action] = [ret_dict[observation][action]] #convert rewards to list 
-            else: #if the state had an entry already 
-                if action not in ret_dict[observation]: #if no entry for action
-                    ret_dict[observation][action] = reward #inserts action (with first reward)
-                if not isinstance(ret_dict[observation][action],list): #if rewards is not a list (do this to prevent overwriting)
-                    if isinstance(ret_dict[observation][action],int): #if there is an integer there 
-                        #this appears to be creating nested lists when it shouldn't ?? 
-                        ret_dict[observation][action] = [ret_dict[observation][action]] #replace integer with list containing integer
-                    else: #(if there is nothing there yet)
-                        ret_dict[observation][action] = [] #create empty list 
-                else:  #if there was a list there already 
-                    ret_dict[observation][action].append(reward) #append rewards list with new reward 
-    
+        for observation, action, reward in history: #for a given history, access all its observations and the returns of all those observations 
+            if observation not in ret_dict:
+                ret_dict[observation] = {}
+            if action not in ret_dict[observation]:
+                ret_dict[observation][action] = []
+            ret_dict[observation][action].append(reward)
+
     # after all the episodes have been run 
-    for observation in ret_dict: #for every state
-        if observation not in action_values: # add state if missing  
-                action_values[observation] = {} 
+    for observation in ret_dict: #for every state 
         for action in ret_dict[observation]: #for every action of every state
-            ret = 0
-            for reward in ret_dict[observation][action]: #for every reward of every action
-                ret += reward #get sum of rewards for that action 
-            average_return = ret / len(ret_dict[observation][action]) #get average by dividing sum of rewards by length of reward list
-            action_values[observation][action] = average_return 
+            average_return = sum(ret_dict[observation][action]) / len(ret_dict[observation][action]) #sum list and divide by len
+            if observation not in action_values: #if action values has no entry for state 
+                action_values[observation] = {}   #insert entry for state and empty dict for key 
+            action_values[observation][action] = average_return  #insert average of returns for action as value of inner dict 
         # for each action for a particular state, average all of the returns over all of the episodes 
     return action_values
 
@@ -144,7 +133,7 @@ def test_policy(policy):
 
 
 if __name__ == "__main__":
-    action_values = run_episodes(10) # 10000 originally 
+    action_values = run_episodes(10000) # 10000 originally 
     print(action_values)
     optimal_policy = get_optimal_policy(action_values)
     print(optimal_policy)

@@ -94,12 +94,22 @@ def run_episodes(n_episodes):
         history = run_random_episode(player, opponent) 
         returns = get_history_returns(history) #Use the get_history_returns function to get the returns for each state-action pair in each episode.
         #get_history_returns returns a nested dictionary with keys=states, values="returns" (dictionaries, keys=actions, values=rewards)
-        for observation, action, reward in history: #for a given history, access all its observations and the returns of all those observations 
-            if observation not in ret_dict:
-                ret_dict[observation] = {}
-            if action not in ret_dict[observation]:
-                ret_dict[observation][action] = []
-            ret_dict[observation][action].append(reward)
+        for k, v in returns.items(): #iterate through entire returns dictionary 
+            if k not in ret_dict:
+                ret_dict[k] = {}
+            #error below 
+            if v not in ret_dict[k]: #want just the key (the action) from v, not the entire v dictionary
+                ret_dict[k][v] = []
+            ret_dict[k][v].append(action[0]) 
+
+            #for observation, action, reward in history: #old way 
+    #    for observation, action in returns.items(): #for a given history, access all its observations and the returns of all those observations 
+    #        if observation not in ret_dict:
+    #            ret_dict[observation] = {}
+    #        if action not in ret_dict[observation]:
+    #            ret_dict[observation][action] = []
+    #        #ret_dict[observation][action].append(reward)   #bad code (?) 
+    #        ret_dict[observation][action].append(returns[observation][action]) 
 
     # after all the episodes have been run 
     for observation in ret_dict: #for every state 

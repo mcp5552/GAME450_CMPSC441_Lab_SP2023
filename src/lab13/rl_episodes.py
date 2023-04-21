@@ -91,31 +91,22 @@ def run_episodes(n_episodes):
     player = PyGameRandomCombatPlayer("Rando") #player that takes random actions 
     opponent = PyGameComputerCombatPlayer("Comp")
     for n in range(n_episodes):
+        print("Episode # = " + str(n))
         history = run_random_episode(player, opponent) 
         returns = get_history_returns(history) #Use the get_history_returns function to get the returns for each state-action pair in each episode.
         #get_history_returns returns a nested dictionary with keys=states, values="returns" (dictionaries, keys=actions, values=rewards)
         for k, v in returns.items(): #iterate through entire returns dictionary 
             if k not in ret_dict:
                 ret_dict[k] = {}
-            #error below 
-            if v.keys()[0] not in ret_dict[k]: #want just the key (the action) from v, not the entire v dictionary
-                ret_dict[k][v.keys()[0]] = []
-            ret_dict[k][v.keys()[0]].append(v.values()) 
-
-            #for observation, action, reward in history: #old way 
-    #    for observation, action in returns.items(): #for a given history, access all its observations and the returns of all those observations 
-    #        if observation not in ret_dict:
-    #            ret_dict[observation] = {}
-    #        if action not in ret_dict[observation]:
-    #            ret_dict[observation][action] = []
-    #        #ret_dict[observation][action].append(reward)   #bad code (?) 
-    #        ret_dict[observation][action].append(returns[observation][action]) 
+            if list(v.keys())[0] not in ret_dict[k]: #want just the key (the action) from v, not the entire v dictionary
+                ret_dict[k][list(v.keys())[0]] = [] 
+            ret_dict[k][list(v.keys())[0]].append(list(v.values())[0]) 
 
     # after all the episodes have been run 
     for observation in ret_dict: #for every state 
         for action in ret_dict[observation]: #for every action of every state
-            average_return = sum(ret_dict[observation][action]) / len(ret_dict[observation][action]) #sum list and divide by len
-            if observation not in action_values: #if action values has no entry for state 
+            average_return = sum(ret_dict[observation][action]) / len(ret_dict[observation][action]) #sum list of rewards and divide by list len
+            if observation not in action_values: #if action_values has no entry for state 
                 action_values[observation] = {}   #insert entry for state and empty dict for key 
             action_values[observation][action] = average_return  #insert average of returns for action as value of inner dict 
         # for each action for a particular state, average all of the returns over all of the episodes 

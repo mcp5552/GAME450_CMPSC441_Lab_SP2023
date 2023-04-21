@@ -13,9 +13,8 @@ from sentence_transformers import SentenceTransformer, util
 
 #Compare individual sentences from separate 2-sentence responses 
 
-#sentences of first response to question
+#sentences of the two responses to the question
 sentences = ["The immune system is a complex network of cells, tissues, and organs that work together to defend the body against harmful pathogens such as viruses, bacteria, and parasites.", "It does this by recognizing and attacking foreign invaders while also maintaining a memory of previous infections to better respond to future threats."]
-
 sentences2 = ["The immune system is a complex network of cells, tissues, and organs that work together to protect the body from harmful pathogens by recognizing and attacking foreign invaders while also maintaining a memory of previous infections to better respond to future threats.", "It does this through a variety of mechanisms including physical barriers, innate immune responses, and adaptive immune responses."]
 
 model = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2')

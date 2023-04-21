@@ -98,9 +98,9 @@ def run_episodes(n_episodes):
             if k not in ret_dict:
                 ret_dict[k] = {}
             #error below 
-            if v not in ret_dict[k]: #want just the key (the action) from v, not the entire v dictionary
-                ret_dict[k][v] = []
-            ret_dict[k][v].append(action[0]) 
+            if v.keys()[0] not in ret_dict[k]: #want just the key (the action) from v, not the entire v dictionary
+                ret_dict[k][v.keys()[0]] = []
+            ret_dict[k][v.keys()[0]].append(v.values()) 
 
             #for observation, action, reward in history: #old way 
     #    for observation, action in returns.items(): #for a given history, access all its observations and the returns of all those observations 

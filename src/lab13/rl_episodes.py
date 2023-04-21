@@ -26,9 +26,6 @@ from collections import defaultdict
 import random
 import numpy as np
 
-random.seed(555)
-
-
 class PyGameRandomCombatPlayer(PyGameComputerCombatPlayer):
     def __init__(self, name):
         super().__init__(name)
@@ -70,28 +67,17 @@ def get_history_returns(history):
     return returns
 
 '''
-def run_episodes(n_episodes)
+run_episodes(n_episodes)
 Runs 'n_episodes' random episodes and return the action values for each state-action pair.
 Action values are calculated as the average return for each state-action pair over the 'n_episodes' episodes.
 '''
 def run_episodes(n_episodes):
-    ''' 
-        Use the get_history_returns function to get the returns for each state-action pair in each episode.
-        Collect the returns for each state-action pair in a dictionary of dictionaries where the keys are states and
-            the values are dictionaries of actions and their returns.
-        After all episodes have been run, calculate the average return for each state-action pair.
-        Return the action values as a dictionary of dictionaries where the keys are states and 
-            the values are dictionaries of actions and their values (average returns).
-        values are floating point numbers
-        ex: action_values = { (100,100): {0: value1, 1: value2, 2: value3}, (80,90): {0:value1, 1:value2}}
-    '''
     ret_dict = {} # a dictionary of dictionaries, keys=states (observations), values=returns (dictionaries, keys=actions, values=rewards)
     action_values = {} 
     history = [] #list of results of each episode (results are lists- [observation (i.e. state), action, reward]) 
     player = PyGameRandomCombatPlayer("Rando") #player that takes random actions 
     opponent = PyGameComputerCombatPlayer("Comp")
     for n in range(n_episodes):
-        print("Episode # = " + str(n))
         history = run_random_episode(player, opponent) 
         returns = get_history_returns(history) #Use the get_history_returns function to get the returns for each state-action pair in each episode.
         #get_history_returns returns a nested dictionary with keys=states, values="returns" (dictionaries, keys=actions, values=rewards)
@@ -101,7 +87,6 @@ def run_episodes(n_episodes):
             if list(v.keys())[0] not in ret_dict[k]: #want just the key (the action) from v, not the entire v dictionary
                 ret_dict[k][list(v.keys())[0]] = [] 
             ret_dict[k][list(v.keys())[0]].append(list(v.values())[0]) 
-
     # after all the episodes have been run 
     for observation in ret_dict: #for every state 
         for action in ret_dict[observation]: #for every action of every state

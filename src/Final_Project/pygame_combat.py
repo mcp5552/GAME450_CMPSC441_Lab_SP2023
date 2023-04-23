@@ -19,7 +19,7 @@ from pygame_human_player import PyGameHumanCombatPlayer
 AI_SPRITE_PATH = Path("assets/ai.png")
 
 pygame.font.init()
-game_font = pygame.font.SysFont("Bradley Hand ITC", 18)
+game_font = pygame.font.SysFont("Bradley Hand ITC", 20)
 
 def run_turn(currentGame, player, opponent):
     states = list(reversed([(player.health, player.weapon) for player in players]))
@@ -31,7 +31,8 @@ def run_turn(currentGame, player, opponent):
     print("%s's health = %d" % (player.name, player.health))
     print("%s's health = %d" % (opponent.name, opponent.health))
     reward = currentGame.checkWin(player, opponent)
-    return reward  # ? 
+    print("reward" + reward)
+    return reward  
 
 def run_pygame_combat(combat_surface, screen, player_sprite):
     currentGame = Combat()
@@ -40,9 +41,10 @@ def run_pygame_combat(combat_surface, screen, player_sprite):
     opponent_sprite = Sprite(
         AI_SPRITE_PATH, (player_sprite.sprite_pos[0] - 100, player_sprite.sprite_pos[1])
     )
-    while not currentGame.gameOver:     # Main Game Loop
+    while not currentGame.gameOver:  # Main Game Loop
         draw_combat_on_window(combat_surface, screen, player_sprite, opponent_sprite)
-        run_turn(currentGame, player, opponent)
+        combat_return = run_turn(currentGame, player, opponent)
+    return combat_return
 
 class PyGameComputerCombatPlayer(CombatPlayer): 
     def __init__(self, name):
@@ -71,27 +73,9 @@ def run_turn(currentGame, player, opponent):
     states = list([state, tuple(reversed(state))])
     for current_player, state in zip(players, states):
         current_player.selectAction(state)
-
     currentGame.newRound()
     currentGame.takeTurn(player, opponent)
     print("%s's health = %d" % (player.name, player.health))
     print("%s's health = %d" % (opponent.name, opponent.health))
     reward = currentGame.checkWin(player, opponent)
     return reward 
-
-def run_pygame_combat(combat_surface, screen, player_sprite):
-    currentGame = Combat()
-    player = PyGameHumanCombatPlayer("Legolas")
-    """ Add a line below that will reset the player object
-    to an instance of the PyGameAICombatPlayer class"""
-
-    opponent = PyGameComputerCombatPlayer("Computer")
-    opponent_sprite = Sprite(
-        AI_SPRITE_PATH, (player_sprite.sprite_pos[0] - 100, player_sprite.sprite_pos[1])
-    )
-
-    # Main Game Loop
-    while not currentGame.gameOver:
-        draw_combat_on_window(combat_surface, screen, player_sprite, opponent_sprite)
-
-        run_turn(currentGame, player, opponent)

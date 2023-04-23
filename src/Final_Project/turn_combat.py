@@ -8,14 +8,13 @@ class Combat
 run_console_combat()
 """
 
-# From https://codereview.stackexchange.com/questions/237601/simple-python-turn-based-battle-game
 import random
 import pygame
 import sys
 from pathlib import Path
 
 sys.path.append(str((Path(__file__) / ".." / "..").resolve().absolute()))
-from lab4.rock_paper_scissor import Player #player is the same class as in rock paper scissors 
+from lab4.rock_paper_scissor import Player 
 
 weapons = ["Sword", "Arrow", "Fire"]
 
@@ -72,21 +71,21 @@ class Combat:
 
     def newRound(self):
         self.round += 1
-        print("\n***   Round: %d   ***\n" % (self.round))
+        print("\n***   Round: %d   ***" % (self.round))
 
     # Check if either or both Players is below zero health 
     def checkWin(self, player, opponent):
         if player.health < 1 and opponent.health > 0:
             self.gameOver = True
-            print("You Lose")
+            #print("You were defeated!") 
             return -1
         elif opponent.health < 1 and player.health > 0:
             self.gameOver = True
-            print("You Win")
+            #print("You won combat!") 
             return 1
         elif player.health < 1 and opponent.health < 1:
             self.gameOver = True
-            print("*** Draw ***")
+            print("*** Draw! ***")
             return 0
         return 0
 

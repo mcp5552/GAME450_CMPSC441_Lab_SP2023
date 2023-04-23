@@ -1,14 +1,13 @@
-"""
-pygame_human_player.py
+"""pygame_human_player.py
 defines running of the game when a human (not an ai) is playing 
 
 contains:
-class PyGameHumanPlayer
-PyGameHumanCombatPlayer(CombatPlayer)
+    class PyGameHumanPlayer
+    PyGameHumanCombatPlayer(CombatPlayer)
 """
 
 import pygame
-from Final_Project.turn_combat import CombatPlayer
+from turn_combat import CombatPlayer
 
 class PyGameHumanPlayer:
     def __init__(self) -> None:

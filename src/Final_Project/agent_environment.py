@@ -6,12 +6,13 @@ contains:
     get_combat_surface(size)
     setup_window(width, height, caption)
     displayCityNames(city_locations, city_names)
-        Class State
+        Class State (defined in main)
 """
 
 import sys
 import pygame
 import random
+from chatGPT import getResponse
 from sprite import Sprite
 from pygame_combat import run_pygame_combat
 from pygame_human_player import PyGameHumanPlayer
@@ -19,13 +20,12 @@ from landscape import get_landscape, get_combat_bg
 from pygame_ai_player import PyGameAIPlayer
 
 from pathlib import Path
-
 sys.path.append(str((Path(__file__) / ".." / "..").resolve().absolute()))
+from cities_n_routes import get_randomly_spread_cities, get_routes
 
-from lab2.cities_n_routes import get_randomly_spread_cities, get_routes
 
 pygame.font.init()
-game_font = pygame.font.SysFont("Comic Sans MS", 15)
+game_font = pygame.font.SysFont("Bradley Hand ITC", 17)
 
 def get_landscape_surface(size):
     landscape = get_landscape(size)
@@ -63,6 +63,10 @@ class State:
         encounter_event,
         cities,
         routes,
+        money,
+        journal,
+        journal_entry_produced,
+        encounter_cnt
     ):
         self.current_city = current_city
         self.destination_city = destination_city
@@ -70,6 +74,10 @@ class State:
         self.encounter_event = encounter_event
         self.cities = cities
         self.routes = routes
+        self.money = money
+        self.journal = journal 
+        self.journal_entry_produced = journal_entry_produced,
+        self.encounter_cnt = encounter_cnt 
 
 
 if __name__ == "__main__":
@@ -79,13 +87,14 @@ if __name__ == "__main__":
     end_city = 9
     sprite_path = "assets/lego.png"
     sprite_speed = 1
-
-    screen = setup_window(width, height, "Game World Gen Practice")
+    money = 100
+    journal = []
+    screen = setup_window(width, height, "Journey to Evereska")
 
     landscape_surface = get_landscape_surface(size)
     combat_surface = get_combat_surface(size)
     city_names = [
-        "Morkomasto",
+        "Loudwater",
         "Morathrad",
         "Eregailin",
         "Corathrad",
@@ -94,7 +103,7 @@ if __name__ == "__main__":
         "Rhunkadi",
         "Londathrad",
         "Baernlad",
-        "Forthyr",
+        "Evereska",
     ]
 
     cities = get_randomly_spread_cities(size, len(city_names))
@@ -106,11 +115,8 @@ if __name__ == "__main__":
     player_sprite = Sprite(sprite_path, cities[start_city])
 
     """Set player of game to either human or AI """
-    #player = PyGameHumanPlayer()
-
-    """ Add a line below that will reset the player variable to 
-    a new object of PyGameAIPlayer class."""
-    player = PyGameAIPlayer() 
+    player = PyGameHumanPlayer()
+    #player = PyGameAIPlayer() 
 
     state = State(
         current_city=start_city,
@@ -119,9 +125,17 @@ if __name__ == "__main__":
         encounter_event=False,
         cities=cities,
         routes=routes,
+        money=money,
+        journal=journal,
+        journal_entry_produced=True,
+        encounter_cnt = 0
     )
+    
 
     while True: #main gameplay loop
+        money_text = "Money: " + str(state.money) + "£"
+        text_surface = game_font.render(money_text, True, (0, 0, 150))
+        screen.blit(text_surface, (10, 440))
         action = player.selectAction(state)
         if 0 <= int(chr(action)) <= 9:
             if int(chr(action)) != state.current_city and not state.travelling:
@@ -133,7 +147,6 @@ if __name__ == "__main__":
                 print(
                     "Travelling from", state.current_city, "to", state.destination_city
                 )
-
         screen.fill(black)
         screen.blit(landscape_surface, (0, 0))
 
@@ -149,14 +162,27 @@ if __name__ == "__main__":
             state.encounter_event = random.randint(0, 1000) < 2
             if not state.travelling:
                 print('Arrived at', state.destination_city)
+                state.journal_entry_produced=False
+
+        if not state.journal_entry_produced: #if a new journal entry is needed 
+            if state.encounter_cnt == 0: #if there we no encounters 
+                state.journal.append(getResponse("Generate a single journal entry about traveling by foot through the country from" + city_names[state.current_city] + "to " + city_names[state.destination_city] + ". Feel free to make up details about the cities. Mention that you did not encounter any bandits. Write in a medieval style."))
+            elif state.encounter_cnt == 1:
+                state.journal.append(getResponse("Generate a single journal entry about traveling by foot through the country from" + city_names[state.current_city] + "to " + city_names[state.destination_city] + ". Feel free to make up details about the cities. Mention that you encountered a bandit but you defeated him. Write in a medieval style.")) 
+            elif state.encounter_cnt > 1: 
+                state.journal.append(getResponse("Generate a single journal entry about traveling by foot through the country from" + city_names[state.current_city] + "to " + city_names[state.destination_city] + ". Feel free to make up details about the cities. Mention that there were " + str(state.encounter_cnt) + " encounters with bandits, but that you managed to defeat the bandits at every encounter. Write in a medieval style." )) 
+            print("Journal updated: " + str(journal[-1]))
 
         if not state.travelling:
             encounter_event = False
+            state.encounter_cnt=0
             state.current_city = state.destination_city
 
         if state.encounter_event:
             run_pygame_combat(combat_surface, screen, player_sprite)
+            state.encounter_cnt += 1
             state.encounter_event = False
+
         else:
             player_sprite.draw_sprite(screen)
         pygame.display.update()

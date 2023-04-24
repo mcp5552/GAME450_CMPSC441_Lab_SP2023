@@ -7,7 +7,7 @@ contains:
 """
 
 import openai
-openai.api_key = "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"
+openai.api_key = "####################################################3"
 
 # Set up the model and prompt
 model_engine = "text-davinci-003"

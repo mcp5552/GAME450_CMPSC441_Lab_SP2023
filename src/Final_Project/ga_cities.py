@@ -11,7 +11,7 @@ Please comment your code in the fitness function to explain how are you making s
 fulfilled. Clearly explain in comments which line of code and variables are used to fulfill each criterion.
 """
 import matplotlib.pyplot as plt
-import pygad
+import pygad #needs to be version 2.18 
 import numpy as np
 from perlin_noise import PerlinNoise
 

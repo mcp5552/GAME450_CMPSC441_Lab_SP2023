@@ -13,13 +13,16 @@ class PyGameHumanPlayer:
     def __init__(self) -> None:
         pass
 
-    def selectAction(self, state):
+#this selects 0-9 but not y/n,
+    def selectAction(self, state): 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
             if event.type == pygame.KEYDOWN:
                 if ord("0") <= event.key <= ord("9"):
                     return event.key
+                if event.key == ord("y") or event.key == ord("n"):
+                    return event.key 
         return ord(str(state.current_city))  # Not a safe operation for >10 cities
 
 class PyGameHumanCombatPlayer(CombatPlayer):

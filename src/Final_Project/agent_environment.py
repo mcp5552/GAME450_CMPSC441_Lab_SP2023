@@ -10,7 +10,8 @@ contains:
 """
 
 #TODO: 
-# money text not printing, 
+# money values are sometimes not rounded nicely  
+# maybe route costs are not rounded and this 
 # y/n for choosing a route 
 # genetic algorithm for city placement 
 
@@ -109,13 +110,13 @@ if __name__ == "__main__":
     combat_surface = get_combat_surface(size)
     
     city_names = [
-        getResponse("Generate a medieval-sounding city name, make it sound German").replace("\n", ""),
+        "Loudwater",
         getResponse("Generate a medieval-sounding city name, make it sound Dwarvish").replace("\n", ""),
         getResponse("Generate a medieval-sounding city name, make it sound Orcish").replace("\n", ""),
         getResponse("Generate a medieval-sounding city name, make it sound French").replace("\n", ""),
         getResponse("Generate a medieval-sounding city name, make it sound Elvish").replace("\n", ""),
-        getResponse("Generate a medieval-sounding city name, make it sound Elvish").replace("\n", ""),
-        getResponse("Generate a medieval-sounding city name, make it sound Elvish").replace("\n", ""),
+        getResponse("Generate a medieval-sounding city name, make it sound Dwarvish").replace("\n", ""),
+        getResponse("Generate a medieval-sounding city name, make it sound English").replace("\n", ""),
         getResponse("Generate a medieval-sounding city name, make it sound Orcish").replace("\n", ""),
         getResponse("Generate a medieval-sounding city name, make it sound Norewegian").replace("\n", ""),
         "Evereska",
@@ -154,15 +155,17 @@ if __name__ == "__main__":
     print("\nWelcome to Journey to Evereska!") 
     print("You must reach the city of Evereska without running out of money. Traveling between cities costs money.") 
     print("If you are attacked by bandits you must defeat them.")
+    print("You now have £" + str(state.money))
     print("What city do you want to travel to? (Use numbers 0-9)")
+
     while True: #main gameplay loop
-        money_text = "Money: " + str(state.money) + "£"
+        money_text = "Money: £" + str(state.money) 
         if state.money <= 0.0:
             print("You ran out of money!")
             break
-        text_surface = game_font.render(money_text, True, (0, 0, 150)) #this isn't working ? 
-        screen.blit(text_surface, (50, 50))
+
         action = player.selectAction(state)
+
         if 0 <= int(chr(action)) <= 9:
             if int(chr(action)) != state.current_city and not state.travelling: 
                 route1 = (cities[state.current_city], cities[int(chr(action))]) #tuple for start to dest city
@@ -177,12 +180,17 @@ if __name__ == "__main__":
                 if true_route in routes:  #if the (start city coords, end city coords) tuple is in routes list
                     route_cost = route_costs[routes.index(true_route)]
                     print("The route you chose costs " + str(route_cost) + ".")
-                    #print("Do you want to take that route? (y/n) ")
-                    #choice = player.selectAction(state)
-                    #if chr(choice) == "y":
-                        #pass
-                    #else:
-                        #continue
+                    print("Do you want to take that route? (y/n) ")
+                    choice = player.selectAction(state)
+
+                    #checking y/n doesnt work because it repeatedly returns numbers 0-9 
+                    while chr(choice) != "y" or chr(choice) != "n":  #lock the program and wait for y/n input
+                        choice = player.selectAction(state)
+                        if chr(choice) == "y": #
+                            pass
+                        elif chr(choice) == "n":
+                            continue
+
                     state.money -= route_cost #reduce money by cost of route
                     #index of that route in routes will serve for looking up cost 
                     start = cities[state.current_city] 
@@ -197,6 +205,9 @@ if __name__ == "__main__":
                     print("There is no route from " + city_names[state.current_city], "to", city_names[int(chr(action))]+ "!")
         screen.fill(black)
         screen.blit(landscape_surface, (0, 0))
+
+        text_surface = game_font.render(money_text, True, (210, 210, 210)) #Print money on screen this isn't working ? 
+        screen.blit(text_surface, (10, 10))
 
         for city in cities:
             pygame.draw.circle(screen, (255, 0, 0), city, 5)

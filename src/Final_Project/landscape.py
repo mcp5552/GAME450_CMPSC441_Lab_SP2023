@@ -12,16 +12,13 @@ import matplotlib.pyplot as plt
 from perlin_noise import PerlinNoise
 import numpy as np
 
-
 def get_elevation(size, octaves=6):
     xpix, ypix = size
     noise = PerlinNoise(octaves=octaves, seed=3)
-    # elevation = np.random.random(size) #random elevation if you want 
     elevation = np.array(
         [[noise([i / xpix, j / ypix]) for j in range(ypix)] for i in range(xpix)]
     )
     return elevation
-
 
 def elevation_to_rgba(elevation, cmap="gist_earth"):
     xpix, ypix = np.array(elevation).shape
@@ -36,11 +33,10 @@ def elevation_to_rgba(elevation, cmap="gist_earth"):
     landscape = landscape.astype("uint8")
     return landscape
 
-
-get_landscape = lambda pixel_map: elevation_to_rgba(get_elevation(pixel_map))
-get_combat_bg = lambda pixel_map: elevation_to_rgba(
-    get_elevation(pixel_map, 10), "RdPu"
-)
+#get_landcape(pixel_map): lambda defined function here 
+get_landscape = lambda size: elevation_to_rgba(get_elevation(size))
+#get_combat_bg(pixel_map): lambda defined function here 
+get_combat_bg = lambda size: elevation_to_rgba(get_elevation(size, 10), "RdPu")
 
 
 if __name__ == "__main__":

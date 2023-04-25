@@ -22,7 +22,6 @@ class PyGameHumanPlayer:
                     return event.key
         return ord(str(state.current_city))  # Not a safe operation for >10 cities
 
-
 class PyGameHumanCombatPlayer(CombatPlayer):
     def __init__(self, name):
         super().__init__(name)

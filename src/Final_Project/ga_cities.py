@@ -113,12 +113,11 @@ if __name__ == "__main__":
     print("Initial Population")
     size = 100, 100
     n_cities = 10
-    elevation = generate_elevation(size)
-    # initialize elevation same as landscape.py 
+    elevation = generate_elevation(size) #use perlin noise to create elevation map
     elevation = np.array(elevation)
     # normalize landscape
     elevation = (elevation - elevation.min()) / (elevation.max() - elevation.min())
-    landscape_pic = elevation_to_rgba(elevation)
+    landscape_pic = elevation_to_rgba(elevation) #create image of elevation map 
 
     # setup fitness function and GA
     fitness = lambda cities, idx: game_fitness(cities, idx, elevation=elevation, size=size)

@@ -10,6 +10,9 @@ and then use it to generate a population of cities.
 Please comment your code in the fitness function to explain how are you making sure each criterion is 
 fulfilled. Clearly explain in comments which line of code and variables are used to fulfill each criterion.
 """
+
+#as long as this is integrated it's fine, doesn't have to actually improve fitness of a city spawning 
+
 import matplotlib.pyplot as plt
 import pygad #needs to be version 2.18 
 import numpy as np
@@ -25,7 +28,7 @@ from landscape import elevation_to_rgba
 """ game_fitness(cities, idx, elevation, size)
 Determines the fitness of some city distribution based on the elevations of cities """
 def game_fitness(cities, idx, elevation, size): #input 1 of game_fitness() is actually (list of grid cell numbers), not cities
-    max_height = .7
+    max_height = .7 
     min_height = .35
     fitness = 1  # Do not return a fitness of 0, it will mess up the algorithm.
     city_coords = solution_to_cities(cities, size)

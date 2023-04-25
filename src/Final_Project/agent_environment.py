@@ -16,8 +16,10 @@ contains:
 # genetic algorithm for city placement 
 
 import sys
-import pygame
+import pygame #
 import random
+import pygad # for GA (needs to be version 2.18)
+
 from chatGPT import getResponse
 from sprite import Sprite
 from pygame_combat import run_pygame_combat
@@ -26,6 +28,7 @@ from landscape import get_landscape, get_combat_bg
 from landscape import get_elevation, elevation_to_rgba #trying to add elevation chekcking for routes 
 from travel_cost import get_route_cost
 from pygame_ai_player import PyGameAIPlayer
+from ga_cities import game_fitness, setup_GA, solution_to_cities
 
 from pathlib import Path
 sys.path.append(str((Path(__file__) / ".." / "..").resolve().absolute()))
@@ -100,13 +103,10 @@ if __name__ == "__main__":
     journal = []
     screen = setup_window(width, height, "Journey to Evereska")
 
-    elevation = get_elevation(size)  #Added this, trying to add elevation checking for routes 
+    print("Generating elevation map...")
+    elevation = get_elevation(size)  
     landscape = elevation_to_rgba(elevation) 
     landscape_surface = pygame.surfarray.make_surface(landscape[:, :, :3])
-
-    #next line should not be necessary
-    #landscape_surface = get_landscape_surface(size)
-
     combat_surface = get_combat_surface(size)
     
     city_names = [
@@ -122,7 +122,23 @@ if __name__ == "__main__":
         "Evereska",
     ]
 
+    #normalize landscape for GA
+    elevation = (elevation - elevation.min()) / (elevation.max() - elevation.min())
+    fitness = lambda cities, idx: game_fitness(cities, idx, elevation=elevation, size=size)
+    fitness_function, ga_instance = setup_GA(fitness, len(city_names), size)
+
+    #genetic 
+
+    #genetic method for placing cities on map
+    #cities = ga_instance.initial_population[0]
+    #cities = solution_to_cities(cities, size)
+    #print("Breeding optimal city placement...")
+    #ga_instance.run()
+    #cities = ga_instance.best_solution()[0]
+
+    #non-genetic method for placing cities (completely random placement)
     cities = get_randomly_spread_cities(size, len(city_names)) #list of (x,y) tuples
+
     routes = get_routes(cities) #list of 2-tuples of (x,y) tuples
     random.shuffle(routes) #randomize routes
     routes = routes[:10] #only keep 10 random routes 

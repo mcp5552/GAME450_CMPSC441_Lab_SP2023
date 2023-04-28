@@ -127,19 +127,35 @@ if __name__ == "__main__":
     fitness = lambda cities, idx: game_fitness(cities, idx, elevation=elevation, size=size)
     fitness_function, ga_instance = setup_GA(fitness, len(city_names), size)
 
-    #genetic 
-
     #genetic method for placing cities on map
-    #cities = ga_instance.initial_population[0]
-    #cities = solution_to_cities(cities, size)
-    #print("Breeding optimal city placement...")
-    #ga_instance.run()
-    #cities = ga_instance.best_solution()[0]
+    cities = ga_instance.initial_population[0]
+    cities = solution_to_cities(cities, size)
+    print("Breeding optimal city placement...")
+    ga_instance.run()
+    cities = ga_instance.best_solution()[0]
+    cities = solution_to_cities(cities, size)
 
     #non-genetic method for placing cities (completely random placement)
-    cities = get_randomly_spread_cities(size, len(city_names)) #list of (x,y) tuples
+    #cities = get_randomly_spread_cities(size, len(city_names)) #list of (x,y) tuples
 
     routes = get_routes(cities) #list of 2-tuples of (x,y) tuples
+    
+    # routes is created by GA as a list of -2tuples of numpy arrays with two elements in them each 
+    # instead of a list of 2-tuples of 2-tuples. Need to convert elements of tuples into tuples
+    for i, route in enumerate(routes): 
+        start1, start2, end1, end2 = route[0][0], route[0][1], route[1][0], route[1][1] 
+        start = (start1, start2)
+        end = (end1, end2)
+        new_route = (start, end)
+        routes[i] = new_route
+
+    #have to convert cities from numpy to tuples as well 
+    #cities is not getting edited? Tried debugging
+    for i, city in enumerate(cities):
+        c_x, c_y = city[0], city[1]
+        new_city = (c_x, c_y)
+        cities[i] = new_city
+ 
     random.shuffle(routes) #randomize routes
     routes = routes[:10] #only keep 10 random routes 
 
@@ -196,9 +212,11 @@ if __name__ == "__main__":
                 if true_route in routes:  #if the (start city coords, end city coords) tuple is in routes list
                     route_cost = route_costs[routes.index(true_route)]
                     print("The route you chose costs " + str(route_cost) + ".")
-                    print("Do you want to take that route? (y/n) ")
-                    choice = player.selectAction(state)
+                    #y/n is broken
+                    #print("Do you want to take that route? (y/n)")
+                    #choice = player.selectAction(state)
 
+                    '''
                     #checking y/n doesnt work because it repeatedly returns numbers 0-9 
                     while chr(choice) != "y" or chr(choice) != "n":  #lock the program and wait for y/n input
                         choice = player.selectAction(state)
@@ -206,6 +224,7 @@ if __name__ == "__main__":
                             pass
                         elif chr(choice) == "n":
                             continue
+                    '''
 
                     state.money -= route_cost #reduce money by cost of route
                     #index of that route in routes will serve for looking up cost 

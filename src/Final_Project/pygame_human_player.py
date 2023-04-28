@@ -21,8 +21,8 @@ class PyGameHumanPlayer:
             if event.type == pygame.KEYDOWN:
                 if ord("0") <= event.key <= ord("9"):
                     return event.key
-               # if event.key == ord("y") or event.key == ord("n"):
-                  #  return event.key 
+                if event.key == ord("y") or event.key == ord("n"):
+                    return event.key 
         return ord(str(state.current_city))  # Not a safe operation for >10 cities
 
 class PyGameHumanCombatPlayer(CombatPlayer):

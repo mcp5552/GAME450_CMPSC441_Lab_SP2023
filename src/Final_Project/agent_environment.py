@@ -13,7 +13,7 @@ contains:
 # money values are sometimes not rounded nicely  
 # maybe route costs are not rounded and this 
 # y/n for choosing a route 
-# genetic algorithm for city placement 
+# run out of money as soon as you select an expensive route 
 
 import sys
 import pygame #
@@ -73,6 +73,7 @@ class State:
         encounter_event,
         cities,
         routes,
+        route_cost,
         money,
         new_money,
         journal,
@@ -85,6 +86,7 @@ class State:
         self.encounter_event = encounter_event
         self.cities = cities
         self.routes = routes
+        self.route_cost = route_cost 
         self.money = money
         self.new_money = new_money
         self.journal = journal 
@@ -98,7 +100,7 @@ if __name__ == "__main__":
     end_city = 9
     sprite_path = "assets/lego.png"
     sprite_speed = 1
-    money = random.randint(20,70)
+    money = random.randint(150,200)
     new_money = 0
     journal = []
     screen = setup_window(width, height, "Journey to Evereska")
@@ -151,13 +153,16 @@ if __name__ == "__main__":
 
     #have to convert cities from numpy to tuples as well 
     #cities is not getting edited? Tried debugging
+    new_cities = []
     for i, city in enumerate(cities):
         c_x, c_y = city[0], city[1]
         new_city = (c_x, c_y)
-        cities[i] = new_city
+        new_cities.append(new_city)
+    cities = new_cities 
  
     random.shuffle(routes) #randomize routes
     routes = routes[:10] #only keep 10 random routes 
+    route_cost = 0
 
     route_costs = []
     for i, route in enumerate(routes):
@@ -179,6 +184,7 @@ if __name__ == "__main__":
         routes=routes,
         money=money,
         new_money = new_money,
+        route_cost = route_cost, 
         journal=journal,
         journal_entry_produced=True,
         encounter_cnt = 0
@@ -210,23 +216,12 @@ if __name__ == "__main__":
                     true_route = route2 
 
                 if true_route in routes:  #if the (start city coords, end city coords) tuple is in routes list
-                    route_cost = route_costs[routes.index(true_route)]
-                    print("The route you chose costs " + str(route_cost) + ".")
-                    #y/n is broken
-                    #print("Do you want to take that route? (y/n)")
-                    #choice = player.selectAction(state)
-
-                    '''
-                    #checking y/n doesnt work because it repeatedly returns numbers 0-9 
-                    while chr(choice) != "y" or chr(choice) != "n":  #lock the program and wait for y/n input
-                        choice = player.selectAction(state)
-                        if chr(choice) == "y": #
-                            pass
-                        elif chr(choice) == "n":
-                            continue
-                    '''
-
-                    state.money -= route_cost #reduce money by cost of route
+                    rcost = route_costs[routes.index(true_route)]
+                    print("The route you chose costs " + str(rcost) + ".")
+                    choice = input("Do you want to take that route? (y/n) (Enter into terminal): ")
+                    if choice == 'n':
+                        continue
+                    state.route_cost = rcost
                     #index of that route in routes will serve for looking up cost 
                     start = cities[state.current_city] 
                     state.destination_city = int(chr(action))
@@ -255,6 +250,9 @@ if __name__ == "__main__":
             state.travelling = player_sprite.move_sprite(destination, sprite_speed)
             state.encounter_event = random.randint(0, 1000) < 2
             if not state.travelling: #if you make to the end of the route 
+                state.money -= state.route_cost #reduce money by cost of route
+                if state.money < 0: #lowest possible money is 0
+                    state.money = 0
                 print('Arrived at', city_names[state.destination_city])
                 print("You now have " + "£" + str(state.money))
                 state.journal_entry_produced=False

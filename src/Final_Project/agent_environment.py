@@ -9,18 +9,12 @@ contains:
         Class State (defined in main)
 """
 
-#TODO: 
-# money values are sometimes not rounded nicely  
-# maybe route costs are not rounded and this 
-# y/n for choosing a route 
-# run out of money as soon as you select an expensive route 
-
 import sys
 import pygame #
 import random
 import pygad # for GA (needs to be version 2.18)
 
-from chatGPT import getResponse
+from GPT import getResponse
 from sprite import Sprite
 from pygame_combat import run_pygame_combat
 from pygame_human_player import PyGameHumanPlayer
@@ -35,7 +29,7 @@ sys.path.append(str((Path(__file__) / ".." / "..").resolve().absolute()))
 from cities_n_routes import get_randomly_spread_cities, get_routes
 
 pygame.font.init()
-game_font = pygame.font.SysFont("Bradley Hand ITC", 17)
+game_font = pygame.font.SysFont("Bradley Hand ITC", 18)
 
 """ get_landscape_surface(size)
 Uses get_landscape, which uses elevation_to_rgba() on get_elevation()
@@ -57,7 +51,6 @@ def setup_window(width, height, caption):
     window = pygame.display.set_mode((width, height))
     pygame.display.set_caption(caption)
     return window
-
 
 def displayCityNames(city_locations, city_names):
     for i, name in enumerate(city_names):
@@ -100,7 +93,7 @@ if __name__ == "__main__":
     end_city = 9
     sprite_path = "assets/lego.png"
     sprite_speed = 1
-    money = random.randint(150,200)
+    money = random.randint(170,240)
     new_money = 0
     journal = []
     screen = setup_window(width, height, "Journey to Evereska")
@@ -151,8 +144,7 @@ if __name__ == "__main__":
         new_route = (start, end)
         routes[i] = new_route
 
-    #have to convert cities from numpy to tuples as well 
-    #cities is not getting edited? Tried debugging
+    # Have to convert cities from numpy to tuples as well 
     new_cities = []
     for i, city in enumerate(cities):
         c_x, c_y = city[0], city[1]
@@ -196,6 +188,10 @@ if __name__ == "__main__":
     print("You now have £" + str(state.money))
     print("What city do you want to travel to? (Use numbers 0-9)")
 
+    #play main music
+    pygame.mixer.music.load("src\Final_Project\Main_theme.wav")
+    pygame.mixer.music.play(-1)
+
     while True: #main gameplay loop
         money_text = "Money: £" + str(state.money) 
         if state.money <= 0.0:
@@ -220,6 +216,7 @@ if __name__ == "__main__":
                     print("The route you chose costs " + str(rcost) + ".")
                     choice = input("Do you want to take that route? (y/n) (Enter into terminal): ")
                     if choice == 'n':
+                        print("What city do you want to travel to? (Use numbers 0-9)")
                         continue
                     state.route_cost = rcost
                     #index of that route in routes will serve for looking up cost 
@@ -236,7 +233,8 @@ if __name__ == "__main__":
         screen.fill(black)
         screen.blit(landscape_surface, (0, 0))
 
-        text_surface = game_font.render(money_text, True, (210, 210, 210)) #Print money on screen this isn't working ? 
+        #print the player's money on the top-left of the screen
+        text_surface = game_font.render(money_text, True, (255, 255, 255)) 
         screen.blit(text_surface, (10, 10))
 
         for city in cities:
@@ -248,7 +246,7 @@ if __name__ == "__main__":
         displayCityNames(cities, city_names)
         if state.travelling:
             state.travelling = player_sprite.move_sprite(destination, sprite_speed)
-            state.encounter_event = random.randint(0, 1000) < 2
+            state.encounter_event = random.randint(0, 1000) < 3
             if not state.travelling: #if you make to the end of the route 
                 state.money -= state.route_cost #reduce money by cost of route
                 if state.money < 0: #lowest possible money is 0
@@ -257,7 +255,7 @@ if __name__ == "__main__":
                 print("You now have " + "£" + str(state.money))
                 state.journal_entry_produced=False
 
-        if not state.journal_entry_produced: #if a new journal entry is needed 
+        if not state.journal_entry_produced and state.money != 0 and state.current_city != end_city: #if a new journal entry is needed (and game not over)
             if state.encounter_cnt == 0: #if there were no encounters 
                 state.journal.append(getResponse("Generate a single 1 paragraph journal entry about traveling by foot through the country from a city called" 
                                                  + city_names[state.current_city] + "to one called" + city_names[state.destination_city] + 
@@ -273,6 +271,7 @@ if __name__ == "__main__":
                                                  ". Feel free to make up details about the cities. Mention that you encountered " + str(state.encounter_cnt) 
                                                  + " bandits along the way, but that you managed to defeat the bandits at every encounter with bow and arrow and a sword. Mention that the bandits you killed dropped " + "£" + str(state.new_money) + " altogether. Maybe refer indirectly to the fact that you are an elf from the elf country, and an archer. Write in a medieval style." )) 
             print("Journal updated: " + str(journal[-1]))
+            print("\nWhat city do you want to travel to next? (Use numbers 0-9)")
             state.journal_entry_produced = True
 
         if not state.travelling:
@@ -283,14 +282,18 @@ if __name__ == "__main__":
 
         if state.encounter_event:
             print("You have encountered a bandit!") 
+            pygame.mixer.music.load("src\Final_Project\Combat.wav")
+            pygame.mixer.music.play(-1)
             combat_outcome = run_pygame_combat(combat_surface, screen, player_sprite)
             if combat_outcome == -1: #-1 if lose
                 print("You died!")
                 break
             elif combat_outcome == 1: #win
                 print("You have defeated the bandit!")
-                new_money = round(random.uniform(.10, 10.00), 2)
+                new_money = round(random.uniform(2.50, 25.00), 2)
                 print("£"+ str(new_money) + " earned!")
+                pygame.mixer.music.load("src\Final_Project\Main_theme.wav")
+                pygame.mixer.music.play(-1)
                 state.money += new_money
                 state.new_money += new_money
             elif combat_outcome == 0: #draw

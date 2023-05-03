@@ -1,17 +1,14 @@
+""" ga_cities.py
+Has methods for instantiating a genetic algorithm and evaluating generations of the algorithm
+with a fitness function
+
+contains:
+    game_fitness(cities, idx, elevation, size)
+    setup_GA(fitness_fn, n_cities, size)
+    solution_to_cities(solution,size)
+    generate_elevation(size)
+    show_cities(cities, landscape_pic, cmap="gist_earth")
 """
-Lab 7: Realistic Cities 
-
-In this lab you will try to generate realistic cities using a genetic algorithm.
-Your cities should not be under water, and should have a realistic distribution across the landscape.
-Your cities may also not be on top of mountains or on top of each other.
-Create the fitness function for your genetic algorithm, so that it fulfills these criteria
-and then use it to generate a population of cities.
-
-Please comment your code in the fitness function to explain how are you making sure each criterion is 
-fulfilled. Clearly explain in comments which line of code and variables are used to fulfill each criterion.
-"""
-
-#as long as this is integrated it's fine, doesn't have to actually improve fitness of a city spawning 
 
 import matplotlib.pyplot as plt
 import pygad #needs to be version 2.18 
@@ -82,11 +79,11 @@ def setup_GA(fitness_fn, n_cities, size):
     return fitness_fn, ga_instance
 
 """solution_to_cities(solution,size)
-It takes a GA solution and size of the map, and returns the city coordinates
+Takes a GA solution and size of the map, and returns the city coordinates
 in the solution.
 :param solution: a solution to GA
 :param size: the size of the grid/map
-:return: The cities are being returned as a list of lists."""
+:return: The cities as a list of lists."""
 def solution_to_cities(solution, size):
     cities = np.array(
         list(map(lambda x: [int(x / size[0]), int(x % size[1])], solution))

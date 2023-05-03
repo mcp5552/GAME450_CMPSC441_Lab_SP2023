@@ -251,8 +251,8 @@ if __name__ == "__main__":
                 state.money -= state.route_cost #reduce money by cost of route
                 if state.money < 0: #lowest possible money is 0
                     state.money = 0
-                print('Arrived at', city_names[state.destination_city])
-                print("You now have " + "£" + str(state.money))
+                print('Arrived at', city_names[state.destination_city] + ".")
+                print("You now have " + "£" + str(state.money) + ".")
                 state.journal_entry_produced=False
 
         if not state.journal_entry_produced and state.money != 0 and state.current_city != end_city: #if a new journal entry is needed (and game not over)

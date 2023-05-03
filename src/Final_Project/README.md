@@ -1,6 +1,6 @@
 # Final Project - CMPSC 441 Artificial Intelligence SP2023  - Max Piazza (mcp5552)
 
-## 1. Abstract
+## Abstract
 
 This project is a computer game programmed in python using the Pygame library. The game takes place on a map with varying elevation and 10 cities on it. Cities have traversable connections between them, but not every city is connected to every other city. The player must navigate from the start city ("Loudwater") to the end city ("Evereska") without dying or running out of money. Traveling from one city to another costs money. When selecting a route, the player is told the route cost and can choose to accept or decline to travel on that route. The amount of money it takes to travel from a city to another depends on elevation of the route; these costs are calculated when the map is generated. As the player moves across a route from one city to another, they may encounter one or more bandits. Encountering a bandit begins a turn-style combat, wherein the player must select a weapon to use for the turn (Sword, Arrow, or Fire) and is shown the outcome of the choice. If the player loses the encounter, they die and the game is over, otherwise they obtain some money that they can use for traveling. If the player runs out of money before reaching the destination, they lose and the game is over. If they Evereska, they win.
 

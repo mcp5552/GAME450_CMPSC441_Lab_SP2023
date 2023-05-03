@@ -10,9 +10,8 @@ A terrain is generated for you
 import numpy as np
 from bresenham import bresenham
 
-def get_route_cost(route_coordinate, game_map):
-    """
-    This function takes in a route_coordinate as a tuple of coordinates of cities to connect, 
+""" get_route_cost(route_coordinate, game_map)
+This function takes in a route_coordinate as a tuple of coordinates of cities to connect, 
     example:  and a game_map as a numpy array of floats,
     remember from previous lab the routes looked like this: [(A, B), (A, C)]
     route_coordinates is just inserts the coordinates of the cities into a route like (A, C).
@@ -38,7 +37,8 @@ def get_route_cost(route_coordinate, game_map):
     :param game_map: a numpy array of floats representing the cost of each cell
 
     :return: a floating point number representing the cost of the route
-    """
+"""
+def get_route_cost(route_coordinate, game_map):
     # Build a path from start to end that looks like [(0, 0), (1, 1), (2, 2), (3, 3), (4, 4), (5, 4)]
     path = list(bresenham(route_coordinate[0][0],route_coordinate[0][1],route_coordinate[1][0],route_coordinate[1][1]))
     return game_map[tuple(zip(*path))].sum()
